@@ -1,5 +1,6 @@
 import pytest
 from recursive_dict import Dict
+from tests.mocks.dicts import example_dict
 
 
 @pytest.mark.parametrize(
@@ -15,10 +16,14 @@ from recursive_dict import Dict
         (
             {"a": {"b": 2, "c": [1, 2]}},
             {"a": {"b": 2, "c": [1, 2]}},
+        ),
+        (
+            example_dict,
+            example_dict
         )
     ]
 )
-def test_get_success_response(
+def test_copy_success(
     dict_,
     response
 ):
