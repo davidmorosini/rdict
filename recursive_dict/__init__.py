@@ -11,7 +11,7 @@ class Dict:
         """
             Returns a deepcopy from data structure
         """
-        pass
+        return deepcopy(self._dict)
 
     def get(self, path, default=None):
         """
