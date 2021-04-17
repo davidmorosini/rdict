@@ -33,10 +33,3 @@ this PR is merged.
 
 Blocker is defined as anything that prevents this PR from being merged immediately.
 -->
-
-## New Airflow Variables or Connections
-
-<!--
-If this PR adds the use of new Airflows Variable and/or Connections, they should be
-mentioned here.
--->
