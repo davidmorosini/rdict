@@ -2,11 +2,12 @@ from copy import deepcopy
 
 
 class Dict:
-    def __init__(self, dict_, sep="/"):
+    def __init__(self, dict_, sep="/", use_copy=True):
         if type(dict_) not in [dict, list]:
             raise ValueError(f"Not dict: {dict_}")
-        self._dict = deepcopy(dict_)
+        self._dict = deepcopy(dict_) if use_copy else dict_
         self._sep = sep
+        self._use_copy = use_copy
 
     def copy(self):
         """
@@ -101,11 +102,76 @@ class Dict:
             self._recursive_get(indexes, self._dict, default, raise_error)
         )
 
+    def _recursive_set(self, indexes, dict_, value):
+        """
+            Protected basis function for creating the path indicates and
+            populates with value inputed
+
+            :param indexes: List of keys from path
+            :type indexes: list
+            :param dict_: Current dict structure in recursion
+            :type dict_: object
+            :param value: New value
+            :type default: object
+
+            :return: Current data structure in recursion
+            :rtype: object
+        """
+        current_index = indexes[0]
+        current_len = len(indexes)
+
+        try:
+            current_value = dict_[current_index]
+        except IndexError:
+            if current_len == 1:
+                dict_.append(value)
+                return dict_
+            current_value = {} if isinstance(indexes[1], str) else []
+            aux = self._recursive_set(indexes[1:], current_value, value)
+            dict_.append(aux)
+            return dict_
+        except TypeError:
+            if current_len == 1:
+                str_instance = isinstance(current_index, str)
+                aux = {current_index: value}
+                current_value = aux if str_instance else [value]
+                return current_value
+            current_value = {} if isinstance(indexes[1], str) else []
+            aux = self._recursive_set(indexes[1:], current_value, value)
+            if isinstance(current_index, str):
+                return {current_index: aux}
+            return [aux]
+        except KeyError:
+            if current_len == 1:
+                dict_[current_index] = value
+                return dict_
+            current_value = {} if isinstance(indexes[1], str) else []
+            aux = self._recursive_set(indexes[1:], current_value, value)
+            dict_[current_index] = aux
+            return dict_
+
+        if current_len == 1:
+            dict_[current_index] = value
+            return dict_
+
+        dict_[current_index] = self._recursive_set(indexes[1:], current_value, value)
+        return dict_
+
     def set(self, path, value):
         """
-            Set a new value in the path
+            Replace value in path or create the path and add value
+
+            :param path: Indicates a path to the resource
+            :type path: str
+            :param value: New value to be insert
+            :type value: object
+
+            :return: deepcopy from current data structure
+            :rtype: dict
         """
-        pass
+        indexes = self._split_path(path)
+        self.dict_ = self._recursive_set(indexes, self._dict, value)
+        return self.copy()
 
     def delete(self, paths):
         """
