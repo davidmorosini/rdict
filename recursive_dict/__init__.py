@@ -306,6 +306,45 @@ class Dict:
         """
         return self._recursive_search_pair(key, value, self._dict, "")
 
+    def contains(self, value, value_type="any"):
+        """
+            Method to check if data structure contains value or key
+
+            :param value: Value to be fetched
+            type value: object
+            :param value_type: Specifies the type of value to be fetched
+            :type is_key: str
+
+            :return: True or False
+            :rtype: bool
+        """
+        value_types = ["any", "key", "value"]
+        if value_type not in value_types:
+            raise KeyError(
+                f"Param value_type '{value_type}' not in {value_types}"
+            )
+
+        from_to = {
+            "key": self.search(value, True),
+            "value": self.search(value, False)
+        }
+        paths = from_to.get(value_type, [from_to["key"], from_to["value"]])
+        return any(paths)
+
+    def contains_pair(self, key, value):
+        """
+            Method to check if data structure contains pair key and value
+
+            :param key: Key to be fetched
+            :param value: Value to be fetched
+            type value: object
+
+            :return: True or False
+            :rtype: bool
+        """
+        paths = self.search_pair(key, value)
+        return any(paths)
+
     def delete(self, paths):
         """
             Delete same paths
