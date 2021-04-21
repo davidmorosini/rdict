@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  recursive-dict-tests:
+    container_name: recursive-dict-tests
+    image: recursive-dict-tests:latest
+    volumes:
+      - .:/app
+    entrypoint: tox
