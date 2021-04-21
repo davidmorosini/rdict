@@ -18,6 +18,30 @@ class Dict:
         """
         return deepcopy(self._dict)
 
+    def _recognize_key(self, key, struct_from):
+        """
+            Function to diferentiate a index number to string key number
+
+            :param key: Value of key with recognize
+            :type key: str
+            :param struct_from: Data struct of value origins
+            :type struct_from: object
+
+            :return: dict key recognized
+            :rtype: object
+        """
+        if any([
+            isinstance(struct_from, list),
+            isinstance(key, bool)
+        ]):
+            return key
+
+        try:
+            int(key)
+            return f"'{key}'"
+        except ValueError:
+            return key
+
     def _split_path(self, path):
         """
             Split the string path into a list of keys that make up the full
@@ -88,8 +112,8 @@ class Dict:
             :param default: Default value to be returned in case of key not
                 found
             :type default: object
-            :param raise_error: Flag to indicate an error when searching for the
-                indicated path
+            :param raise_error: Flag to indicate an error when searching for
+                the indicated path
             :type raise_error: bool
 
             :return: Found value or default
@@ -154,7 +178,9 @@ class Dict:
             dict_[current_index] = value
             return dict_
 
-        dict_[current_index] = self._recursive_set(indexes[1:], current_value, value)
+        dict_[current_index] = self._recursive_set(
+            indexes[1:], current_value, value
+        )
         return dict_
 
     def set(self, path, value):
@@ -172,6 +198,113 @@ class Dict:
         indexes = self._split_path(path)
         self.dict_ = self._recursive_set(indexes, self._dict, value)
         return self.copy()
+
+    def _recursive_search(self, value, dict_, current_path, is_key):
+        """
+            Protected basis function to be search an value (key/value)
+            in data structure and return all paths to resource
+
+            :param value: Value to be search in data structure
+            :type value: object
+            :param dict_: Current branch of data structure
+            :type dict_: dict or list
+            :param current_path: Current path
+            :type current_path: str
+            :param is_key: Flag to indicate if value is key or value
+            :type is_key: bool
+
+            :return: Current list of found paths
+            :rtype: list
+        """
+        found = []
+        if type(dict_) not in [dict, list]:
+            return found
+
+        it = dict_.items() if isinstance(dict_, dict) else enumerate(dict_)
+        for key_, value_ in it:
+            aux_path = self._recognize_key(key_, dict_)
+            new_path = f"{current_path}/{aux_path}"
+
+            if any([
+                is_key and key_ == value,
+                not is_key and value_ == value
+            ]):
+                found.append(new_path)
+
+            deep_found = self._recursive_search(
+                value, value_, new_path, is_key
+            )
+            found.extend(deep_found)
+        return found
+
+    def search(self, value, is_key):
+        """
+            Method to search an value or key in data structure and return
+            all paths to resource
+
+            :param value: Value to be search
+            type value: object
+            :param is_key: Flag to indicate if value is key or value
+            :type is_key: bool
+
+            :return: List of all paths found with resource
+            :rtype: list
+        """
+        return self._recursive_search(value, self._dict, "", is_key)
+
+    def _recursive_search_pair(self, key, value, dict_, current_path):
+        """
+            Protected basis function to be search an pair (key/value)
+            in data structure and return all paths to resource
+
+            :param key: Key to be search in data structure
+            :type key: object
+            :param value: Value to be search in data structure
+            :type value: object
+            :param dict_: Current branch of data structure
+            :type dict_: dict or list
+            :param current_path: Current path
+            :type current_path: str
+
+            :return: Current list of found paths
+            :rtype: list
+        """
+        found = []
+        if type(dict_) not in [dict, list]:
+            return found
+
+        it = dict_.items() if isinstance(dict_, dict) else enumerate(dict_)
+        for key_, value_ in it:
+            aux_path = self._recognize_key(key_, dict_)
+            new_path = f"{current_path}/{aux_path}"
+
+            if all([
+                key_ == key,
+                value_ == value
+            ]):
+                found.append(new_path)
+
+            deep_found = self._recursive_search_pair(
+                key, value, value_, new_path
+            )
+            found.extend(deep_found)
+
+        return found
+
+    def search_pair(self, key, value):
+        """
+            Method to search an pair (key/value) in data structure and return
+            all paths to resource
+
+            :param key: Key to be search in data structure
+            :type key: object
+            :param value: Value to be search in data structure
+            type value: object
+
+            :return: List of all paths found with resource
+            :rtype: list
+        """
+        return self._recursive_search_pair(key, value, self._dict, "")
 
     def delete(self, paths):
         """
