@@ -345,8 +345,56 @@ class Dict:
         paths = self.search_pair(key, value)
         return any(paths)
 
+    def _recursive_del(self, indexes, dict_):
+        """
+            Protected basis function for creating the key delete recursion
+            within the structure
+
+            :param indexes: List of keys from path
+            :type indexes: list
+            :param dict_: Current dict structure in recursion
+            :type dict_: object
+
+            :return: Dictionary with key removed
+            :rtype: dict
+        """
+        current_index = indexes[0]
+        current_len = len(indexes)
+
+        if current_len == 2:
+            del dict_[indexes[0]][indexes[-1]]
+            return dict_
+        elif current_len == 1:
+            del dict_[indexes[0]]
+            return dict_
+
+        dict_[current_index] = self._recursive_del(
+            indexes[1:],
+            dict_[current_index]
+        )
+
+        return dict_
+
     def delete(self, paths):
         """
-            Delete same paths
+            Removes paths passed within the dictionary list and returns the
+            sanitized dictionary
+
+            :param paths: List of paths to be removed from the dictionary
+            :type path: list
         """
-        pass
+        if type(paths) not in [str, list]:
+            raise ValueError(f"Type value '{paths}' not in {[str, list]}")
+
+        if isinstance(paths, str):
+            paths = [paths]
+
+        aux = self.copy() if self._use_copy else self._dict
+        for p in paths:
+            indexes = self._split_path(p)
+            aux = self._recursive_del(indexes, aux)
+
+        if self._use_copy:
+            self._dict = aux
+
+        return self.copy()
