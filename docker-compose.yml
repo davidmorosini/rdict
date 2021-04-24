@@ -6,4 +6,4 @@ services:
     image: recursive-dict-tests:latest
     volumes:
       - .:/app
-    entrypoint: pytest
+    entrypoint: pytest --cov-config .coveragerc --cov=recursive_dict
