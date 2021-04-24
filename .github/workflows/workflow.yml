@@ -31,11 +31,10 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install dependencies
+    - name: Build test image
       run: |
-        python -m pip install --upgrade pip
-        pip install tox==3.23.0
+        make build-tests
     - name: Running unit tests
       run: |
-        tox tests
+        make run-unit-test
     needs: linter
