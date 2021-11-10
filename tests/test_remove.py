@@ -3,11 +3,7 @@ from rdict import Rdict
 
 
 @pytest.mark.parametrize(
-    (
-        "dict_",
-        "paths",
-        "response"
-    ),
+    ("dict_", "paths", "response"),
     [
         (
             {"a": 4, "b": {"c": 5}},
@@ -22,36 +18,28 @@ from rdict import Rdict
         (
             {"a": 4, "b": {"c": {"d": 5}}},
             ["a", "b/c/d"],
-            {'b': {'c': {}}},
+            {"b": {"c": {}}},
         ),
         (
             {"a": 4, "b": {"c": {"d": 5}}},
             ["a", "b/c/d", "b/c"],
-            {'b': {}},
+            {"b": {}},
         ),
         (
             {"a": 4, "b": {"c": {"d": 5}}},
             ["a", "b/c/d", "b/c", "b"],
             {},
-        )
-    ]
+        ),
+    ],
 )
-def test_delete_success(
-    dict_,
-    paths,
-    response
-):
+def test_delete_success(dict_, paths, response):
     rdict = Rdict(dict_)
     resp = rdict.delete(paths)
     assert response == resp
 
 
 @pytest.mark.parametrize(
-    (
-        "dict_",
-        "paths",
-        "error_raise"
-    ),
+    ("dict_", "paths", "error_raise"),
     [
         (
             {"a": 4, "b": {"c": 5}},
@@ -78,13 +66,9 @@ def test_delete_success(
             ["a/5", "b/3/d"],
             IndexError,
         ),
-    ]
+    ],
 )
-def test_delete_error(
-    dict_,
-    paths,
-    error_raise
-):
+def test_delete_error(dict_, paths, error_raise):
     rdict = Rdict(dict_)
     with pytest.raises(error_raise):
         rdict.delete(paths)
