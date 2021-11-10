@@ -1,9 +1,25 @@
 version: '3'
 
 services:
-  recursive-dict-tests:
-    container_name: recursive-dict-tests
-    image: recursive-dict-tests:latest
+  tests:
+    container_name: rdict-tests
+    image: recursive-dict-docker:latest
     volumes:
       - .:/app
     entrypoint: pytest
+  
+  black-linter:
+    container_name: rdict-linter
+    image: recursive-dict-docker:latest
+    entrypoint: python -m black .
+    volumes:
+      - .:/app
+
+  jupyterlab:
+    container_name: rdict-jupyterlab
+    image: recursive-dict-docker:latest
+    volumes:
+      - .:/app
+    ports:
+      - 8888:8888
+    entrypoint: jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root --NotebookApp.token=

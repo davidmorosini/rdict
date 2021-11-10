@@ -1,10 +1,15 @@
-default: lint
+default: qas
 
-build-tests:
-	@docker build . --target=recursive-dict-tests -t recursive-dict-tests
+build-qas:
+	@docker build -f Dockerfile -t recursive-dict-docker .
 
-run-tests: build-tests
-	@docker-compose run recursive-dict-tests tests
+run-tests: build-qas
+	@docker-compose up tests
 
-lint:
-	@flake8 . --ignore=W503
+run-notebook: build-qas
+	@docker-compose up jupyterlab
+
+black-linter: build-qas
+	@docker-compose up black-linter
+
+qas: black-linter run-tests
