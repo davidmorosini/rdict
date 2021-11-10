@@ -25,7 +25,6 @@ from tests.mocks.dicts import example_dict
         ),
         (example_dict, "//////", None, example_dict),
         (example_dict, "", None, example_dict),
-        (example_dict, None, None, example_dict),
         (example_dict, "////c///////", None, 4),
         (example_dict, "'1'", None, "fake integer"),
         (example_dict, "a/b/x/y/z/2/'3'/0", None, 1),
