@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 from tests.mocks.dicts import example_dict
 
 
@@ -43,7 +43,7 @@ def test_contains_success(
     value_type,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     assert response == rdict.contains(value, value_type=value_type)
 
 
@@ -76,6 +76,6 @@ def test_contains_error(
     value,
     value_type
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     with pytest.raises(KeyError):
         rdict.contains(value, value_type=value_type)

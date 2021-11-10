@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 
 
 @pytest.mark.parametrize(
@@ -12,4 +12,4 @@ from recursive_dict import Dict
 )
 def test_copy_success(dict_):
     with pytest.raises(ValueError):
-        Dict(dict_)
+        Rdict(dict_)

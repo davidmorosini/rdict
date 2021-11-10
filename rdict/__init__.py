@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 
-class Dict:
+class Rdict:
     def __init__(self, dict_, sep="/", use_copy=True):
         if type(dict_) not in [dict, list]:
             raise ValueError(f"Not dict: {dict_}")

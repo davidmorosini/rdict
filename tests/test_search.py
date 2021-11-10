@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 from tests.mocks.dicts import example_dict
 
 
@@ -101,6 +101,6 @@ def test_search_success(
     is_key,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     none_paths = rdict.search(value, is_key)
     assert sorted(response) == sorted(none_paths)

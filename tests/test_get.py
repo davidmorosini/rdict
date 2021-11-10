@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 from tests.mocks.dicts import example_dict
 
 
@@ -130,7 +130,7 @@ def test_get_success(
     default,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     resp = rdict.get(path, default)
     assert response == resp
 
@@ -170,6 +170,6 @@ def test_get_error(
     path,
     error_raise
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     with pytest.raises(error_raise):
         rdict.get(path, raise_error=True)

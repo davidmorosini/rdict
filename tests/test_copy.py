@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 from tests.mocks.dicts import example_dict
 
 
@@ -27,6 +27,6 @@ def test_copy_success(
     dict_,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     resp = rdict.copy()
     assert response == resp

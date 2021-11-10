@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 from tests.mocks.dicts import example_dict
 
 
@@ -61,5 +61,5 @@ def test_contains_pair_success(
     value,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     assert response == rdict.contains_pair(key, value)

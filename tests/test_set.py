@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 
 
 @pytest.mark.parametrize(
@@ -54,6 +54,6 @@ def test_set_success(
     value,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     resp = rdict.set(path, value)
     assert response == resp

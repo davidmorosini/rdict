@@ -1,5 +1,5 @@
 import pytest
-from recursive_dict import Dict
+from rdict import Rdict
 
 
 @pytest.mark.parametrize(
@@ -41,7 +41,7 @@ def test_delete_success(
     paths,
     response
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     resp = rdict.delete(paths)
     assert response == resp
 
@@ -85,7 +85,7 @@ def test_delete_error(
     paths,
     error_raise
 ):
-    rdict = Dict(dict_)
+    rdict = Rdict(dict_)
     with pytest.raises(error_raise):
         rdict.delete(paths)
     assert rdict.copy() == dict_
