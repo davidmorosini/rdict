@@ -1,0 +1,40 @@
+name: QAS
+
+on:
+  pull_request:
+      types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  black-linter:
+    name: Black Check (linter)
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache Docker
+        uses: satackey/action-docker-layer-caching@v0.0.11
+
+      - name: Check Black
+        run: make black-linter
+
+  tests:
+    name: Unit Tests
+    runs-on: ubuntu-20.04
+    needs: [black-linter]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Cache Docker
+        uses: satackey/action-docker-layer-caching@v0.0.11 
+
+      - name: Run Unit Tests
+        run: make run-tests
