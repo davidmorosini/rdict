@@ -11,16 +11,15 @@ from rdict.recursive import (
 )
 
 
-class Rdict:
+class Rdict(dict):
     def __init__(self, dict_: dict, sep: str = "/", use_copy: bool = True):
-        if type(dict_) not in [dict, list]:
-            raise ValueError(f"Not dict: {dict_}")
-        self._dict = deepcopy(dict_) if use_copy else dict_
+        dict_for_use = deepcopy(dict_) if use_copy else dict_
+        super().__init__(dict_for_use)
         self._sep = sep
         self._use_copy = use_copy
 
     def copy(self) -> dict:
-        return deepcopy(self._dict)
+        return deepcopy(self)
 
     def get(self, path: str, default: Any = None, raise_error: bool = False) -> Any:
         indexes = path_to_array_keys(path)
@@ -29,29 +28,40 @@ class Rdict:
 
     def set(self, path: str, value: Any) -> dict:
         indexes = path_to_array_keys(path)
-        self._dict = dict_recursive_set(indexes, self._dict, value)
+        self = dict_recursive_set(indexes, self, value)
         return self.copy()
 
-    def search(self, value: Any, is_key: bool) -> List[str]:
-        return dict_recursive_search(value, self._dict, "", is_key)
+    def search(self, value: Any, is_key: bool, base_path: str = "") -> List[str]:
+        recursion_classes = [type(self), dict, list]
+        struct_base = self.get(base_path)
+        return dict_recursive_search(value, struct_base, "", is_key, recursion_classes)
 
-    def search_pair(self, key: Any, value: Any) -> List[str]:
-        return dict_recursive_search_pair(key, value, self._dict, "")
+    def search_pair(self, key: Any, value: Any, base_path: str = "") -> List[str]:
+        recursion_classes = [type(self), dict, list]
+        struct_base = self.get(base_path)
+        return dict_recursive_search_pair(
+            key, value, struct_base, "", recursion_classes
+        )
 
-    def contains(self, value: Any, value_type: str = "any") -> bool:
+    def contains(
+        self, value: Any, value_type: str = "any", base_path: str = ""
+    ) -> bool:
         value_types = ["any", "key", "value"]
         if value_type not in value_types:
             raise KeyError(f"Param value_type '{value_type}' not in {value_types}")
 
-        from_to = {"key": self.search(value, True), "value": self.search(value, False)}
+        from_to = {
+            "key": self.search(value, True, base_path=base_path),
+            "value": self.search(value, False, base_path=base_path),
+        }
         paths = from_to.get(value_type, list(from_to.values()))
         return any(paths)
 
-    def contains_pair(self, key: Any, value: Any) -> bool:
-        paths = self.search_pair(key, value)
+    def contains_pair(self, key: Any, value: Any, base_path: str = "") -> bool:
+        paths = self.search_pair(key, value, base_path=base_path)
         return any(paths)
 
     def delete(self, path: str) -> dict:
         indexes = path_to_array_keys(path)
-        self._dict = dict_recursive_del(indexes, self._dict)
+        self = dict_recursive_del(indexes, self)
         return self.copy()

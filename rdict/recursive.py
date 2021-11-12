@@ -67,10 +67,15 @@ def dict_recursive_set(indexes: List[Union[int, str]], dict_: dict, value: Any) 
 
 
 def dict_recursive_search(
-    value: Any, dict_: dict, current_path: str, is_key: bool
+    value: Any,
+    dict_: dict,
+    current_path: str,
+    is_key: bool,
+    recursion_class_: List[Any],
 ) -> List[str]:
+
     found = []
-    if type(dict_) not in [dict, list]:
+    if type(dict_) not in recursion_class_:
         return found
 
     it = dict_.items() if isinstance(dict_, dict) else enumerate(dict_)
@@ -81,16 +86,22 @@ def dict_recursive_search(
         if any([is_key and key_ == value, not is_key and value_ == value]):
             found.append(new_path)
 
-        deep_found = dict_recursive_search(value, value_, new_path, is_key)
+        deep_found = dict_recursive_search(
+            value, value_, new_path, is_key, recursion_class_
+        )
         found.extend(deep_found)
     return found
 
 
 def dict_recursive_search_pair(
-    key: Union[int, str], value: Any, dict_: dict, current_path: str
+    key: Union[int, str],
+    value: Any,
+    dict_: dict,
+    current_path: str,
+    recursion_class_: List[Any],
 ) -> List[Any]:
     found = []
-    if type(dict_) not in [dict, list]:
+    if type(dict_) not in recursion_class_:
         return found
 
     it = dict_.items() if isinstance(dict_, dict) else enumerate(dict_)
@@ -101,7 +112,9 @@ def dict_recursive_search_pair(
         if all([key_ == key, value_ == value]):
             found.append(new_path)
 
-        deep_found = dict_recursive_search_pair(key, value, value_, new_path)
+        deep_found = dict_recursive_search_pair(
+            key, value, value_, new_path, recursion_class_
+        )
         found.extend(deep_found)
 
     return found
