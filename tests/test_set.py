@@ -26,6 +26,9 @@ from rdict import Rdict
             7,
             {"a": [0, {"b": [{"t": [7]}]}]},
         ),
+        ({"a": [1]}, "a/teste", "b", {"a": {"teste": "b"}}),
+        ({"a": [1, 2]}, "a/teste", "b", {"a": {"teste": "b"}}),
+        ({"a": "6"}, "a/teste", "b", {"a": {"teste": "b"}}),
     ],
 )
 def test_set_success(dict_, path, value, response):
